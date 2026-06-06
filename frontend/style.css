@@ -1,0 +1,37 @@
+.status-bar {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.status-upgrade {
+    background: white;
+    color: #4F46E5;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.watermark-warning {
+    background: #FEF3C7;
+    border-left: 4px solid #F59E0B;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 4px;
+    color: #92400E;
+}
+
+.watermark-warning a {
+    color: #4F46E5;
+    text-decoration: underline;
+    cursor: pointer;
+}
