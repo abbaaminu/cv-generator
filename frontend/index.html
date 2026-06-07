@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ABSON CV Generator - AI-Powered CV & Cover Letter Creator</title>
+    <title>ABSON CV Genius - Professional AI CV Builder</title>
     <style>
         * {
             margin: 0;
@@ -12,15 +12,17 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
             color: #333;
-            line-height: 1.6;
-            background: #f7fafc;
         }
 
+        /* Navbar */
         .navbar {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
             position: fixed;
             width: 100%;
             top: 0;
@@ -28,7 +30,7 @@
         }
 
         .nav-container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
             padding: 1rem 2rem;
             display: flex;
@@ -39,7 +41,10 @@
         .logo {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #4F46E5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .nav-links a {
@@ -50,80 +55,87 @@
         }
 
         .nav-links a:hover {
-            color: #4F46E5;
+            color: #667eea;
         }
 
         .btn-secondary {
             background: transparent;
-            border: 2px solid #4F46E5;
-            color: #4F46E5;
+            border: 2px solid #667eea;
+            color: #667eea;
             padding: 0.5rem 1.5rem;
-            border-radius: 8px;
+            border-radius: 25px;
             cursor: pointer;
             transition: all 0.3s;
+            font-weight: 600;
         }
 
         .btn-secondary:hover {
-            background: #4F46E5;
+            background: #667eea;
             color: white;
         }
 
-        .btn-primary {
-            background: #4F46E5;
-            color: white;
-            border: none;
-            padding: 0.75rem 2rem;
-            border-radius: 8px;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: transform 0.3s;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-        }
-
+        /* Hero Section */
         .hero {
             text-align: center;
             padding: 8rem 2rem 4rem;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
         .hero h1 {
-            font-size: 3rem;
+            font-size: 3.5rem;
             margin-bottom: 1rem;
+            font-weight: 800;
         }
 
         .hero p {
             font-size: 1.2rem;
             margin-bottom: 2rem;
+            opacity: 0.9;
         }
 
+        .btn-primary {
+            background: white;
+            color: #667eea;
+            border: none;
+            padding: 1rem 2.5rem;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* Features */
         .features {
             padding: 4rem 2rem;
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
+            background: white;
         }
 
         .features h2 {
             text-align: center;
             font-size: 2.5rem;
             margin-bottom: 3rem;
+            color: #333;
         }
 
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 2rem;
         }
 
         .feature-card {
             text-align: center;
             padding: 2rem;
-            border-radius: 12px;
-            background: white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 16px;
+            background: #f8f9fa;
             transition: transform 0.3s;
         }
 
@@ -136,9 +148,78 @@
             margin-bottom: 1rem;
         }
 
-        .pricing {
-            background: #f7fafc;
+        /* Templates Showcase */
+        .templates-showcase {
             padding: 4rem 2rem;
+            background: #f0f2f5;
+        }
+
+        .templates-showcase h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .templates-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .template-preview {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .template-preview:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.15);
+        }
+
+        .template-image {
+            height: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .template-info {
+            padding: 1.5rem;
+        }
+
+        .template-info h3 {
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .template-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .template-badge {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Pricing */
+        .pricing {
+            padding: 4rem 2rem;
+            background: white;
         }
 
         .pricing h2 {
@@ -151,21 +232,25 @@
             max-width: 1200px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
             gap: 2rem;
         }
 
         .pricing-card {
-            background: white;
-            border-radius: 12px;
+            background: #f8f9fa;
+            border-radius: 20px;
             padding: 2rem;
             text-align: center;
             position: relative;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
         }
 
         .pricing-card.popular {
-            border: 2px solid #4F46E5;
+            border: 2px solid #667eea;
             transform: scale(1.05);
         }
 
@@ -174,7 +259,7 @@
             top: -12px;
             left: 50%;
             transform: translateX(-50%);
-            background: #4F46E5;
+            background: #667eea;
             color: white;
             padding: 0.25rem 1rem;
             border-radius: 20px;
@@ -185,6 +270,7 @@
             font-size: 3rem;
             font-weight: bold;
             margin: 1rem 0;
+            color: #667eea;
         }
 
         .price span {
@@ -198,32 +284,89 @@
         }
 
         .pricing-card li {
-            margin: 0.5rem 0;
+            margin: 0.75rem 0;
             color: #666;
         }
 
         .btn-plan {
-            background: #4F46E5;
+            background: #667eea;
             color: white;
             border: none;
             padding: 0.75rem 2rem;
-            border-radius: 8px;
+            border-radius: 50px;
             cursor: pointer;
             width: 100%;
             font-size: 1rem;
+            font-weight: 600;
+            transition: transform 0.3s;
         }
 
+        .btn-plan:hover {
+            transform: translateY(-2px);
+        }
+
+        /* Generator */
         .generator {
             padding: 6rem 2rem 4rem;
-            max-width: 800px;
+            max-width: 1200px;
             margin: 0 auto;
         }
 
         .container {
             background: white;
             padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .template-selector {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            background: #f8f9fa;
             border-radius: 12px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .template-selector h3 {
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .template-options {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .template-option {
+            flex: 1;
+            min-width: 150px;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .template-option:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .template-option.active {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .template-option.active .template-icon {
+            color: white;
+        }
+
+        .template-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
         }
 
         .tabs {
@@ -239,12 +382,13 @@
             border: none;
             cursor: pointer;
             font-size: 1rem;
-            border-radius: 8px;
+            border-radius: 12px;
             transition: all 0.3s;
+            font-weight: 600;
         }
 
         .tab-btn.active {
-            background: #4F46E5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
         }
 
@@ -255,7 +399,8 @@
         .form-group label {
             display: block;
             margin-bottom: 0.5rem;
-            font-weight: 500;
+            font-weight: 600;
+            color: #333;
         }
 
         .form-group input,
@@ -263,36 +408,66 @@
         .form-group select {
             width: 100%;
             padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 6px;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
             font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
         }
 
         .btn-generate {
             width: 100%;
-            background: #4F46E5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             border: none;
             padding: 1rem;
-            border-radius: 8px;
+            border-radius: 12px;
             font-size: 1.1rem;
+            font-weight: 600;
             cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .btn-generate:hover {
+            transform: translateY(-2px);
         }
 
         .result {
             margin-top: 2rem;
             padding: 2rem;
-            background: #f9fafb;
-            border-radius: 12px;
+            background: #f8f9fa;
+            border-radius: 16px;
         }
 
         .result-content {
             background: white;
             padding: 2rem;
-            border-radius: 8px;
+            border-radius: 12px;
             margin: 1rem 0;
-            max-height: 500px;
+            max-height: 600px;
             overflow-y: auto;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* CV Template Styles */
+        .result-content.template-modern {
+            font-family: 'Segoe UI', sans-serif;
+        }
+        
+        .result-content.template-classic {
+            font-family: 'Times New Roman', serif;
+        }
+        
+        .result-content.template-creative {
+            font-family: 'Helvetica', sans-serif;
+            border-left: 4px solid #667eea;
         }
 
         .result-actions {
@@ -302,10 +477,12 @@
         }
 
         .btn-export, .btn-copy, .btn-new {
-            padding: 0.5rem 1rem;
+            padding: 0.75rem 1.5rem;
             border: none;
-            border-radius: 6px;
+            border-radius: 50px;
             cursor: pointer;
+            font-weight: 600;
+            transition: transform 0.3s;
         }
 
         .btn-export {
@@ -321,6 +498,10 @@
         .btn-new {
             background: #6B7280;
             color: white;
+        }
+
+        .btn-export:hover, .btn-copy:hover, .btn-new:hover {
+            transform: translateY(-2px);
         }
 
         .modal {
@@ -339,9 +520,9 @@
         .modal-content {
             background: white;
             padding: 2rem;
-            border-radius: 12px;
-            width: 90%;
+            border-radius: 20px;
             max-width: 500px;
+            width: 90%;
             position: relative;
         }
 
@@ -357,7 +538,7 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
             padding: 1rem;
-            border-radius: 8px;
+            border-radius: 12px;
             margin-bottom: 1.5rem;
             display: flex;
             justify-content: space-between;
@@ -368,10 +549,10 @@
 
         .status-upgrade {
             background: white;
-            color: #4F46E5;
+            color: #667eea;
             border: none;
             padding: 0.5rem 1rem;
-            border-radius: 6px;
+            border-radius: 25px;
             cursor: pointer;
             font-weight: bold;
         }
@@ -381,14 +562,8 @@
             border-left: 4px solid #F59E0B;
             padding: 1rem;
             margin-bottom: 1rem;
-            border-radius: 4px;
+            border-radius: 8px;
             color: #92400E;
-        }
-
-        .watermark-warning a {
-            color: #4F46E5;
-            text-decoration: underline;
-            cursor: pointer;
         }
 
         .footer {
@@ -408,7 +583,7 @@
 
         .footer-section h4 {
             margin-bottom: 1rem;
-            color: #4F46E5;
+            color: #667eea;
         }
 
         .footer-section a {
@@ -430,7 +605,7 @@
             .pricing-card.popular { transform: scale(1); }
             .pricing-grid { grid-template-columns: 1fr; }
             .result-actions { flex-direction: column; }
-            .status-bar { flex-direction: column; text-align: center; }
+            .template-options { flex-direction: column; }
         }
     </style>
 </head>
@@ -440,6 +615,7 @@
             <div class="logo">🚀 ABSON CV Genius</div>
             <div class="nav-links">
                 <a href="#features">Features</a>
+                <a href="#templates">Templates</a>
                 <a href="#pricing">Pricing</a>
                 <button id="loginBtn" class="btn-secondary">Login</button>
             </div>
@@ -449,49 +625,103 @@
     <main>
         <section class="hero">
             <h1>Create Professional CVs & Cover Letters in Minutes</h1>
-            <p>Powered by AI - Get hired faster with personalized documents</p>
-            <button id="getStartedBtn" class="btn-primary">Get Started Free</button>
+            <p>Powered by AI - Choose from 10+ Professional Templates</p>
+            <button id="getStartedBtn" class="btn-primary">Create Your CV Now →</button>
         </section>
 
         <section id="features" class="features">
-            <h2>Features</h2>
+            <h2>Why Choose ABSON CV Genius?</h2>
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon">📝</div>
-                    <h3>AI-Powered Generation</h3>
-                    <p>Get tailored CVs and cover letters using advanced AI</p>
+                    <div class="feature-icon">🎨</div>
+                    <h3>10+ Professional Templates</h3>
+                    <p>Choose from modern, classic, creative, and executive designs</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon">🎨</div>
-                    <h3>Multiple Templates</h3>
-                    <p>Choose from professional templates for any industry</p>
+                    <div class="feature-icon">🤖</div>
+                    <h3>AI-Powered Content</h3>
+                    <p>Smart AI generates tailored content based on your experience</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">📄</div>
-                    <h3>Export Any Format</h3>
-                    <p>Download as PDF, DOCX, or share via link</p>
+                    <h3>PDF Export</h3>
+                    <p>Download professionally formatted PDFs instantly</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">⚡</div>
-                    <h3>Fast Generation</h3>
-                    <p>Get your documents in seconds, not hours</p>
+                    <h3>Quick Generation</h3>
+                    <p>Get your perfect CV in under 30 seconds</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="templates" class="templates-showcase">
+            <h2>Professional Templates</h2>
+            <div class="templates-grid">
+                <div class="template-preview" data-template="modern">
+                    <div class="template-image">📄</div>
+                    <div class="template-info">
+                        <h3>Modern Professional</h3>
+                        <p>Clean, contemporary design perfect for tech and creative industries</p>
+                        <span class="template-badge">Most Popular</span>
+                    </div>
+                </div>
+                <div class="template-preview" data-template="classic">
+                    <div class="template-image">📑</div>
+                    <div class="template-info">
+                        <h3>Classic Executive</h3>
+                        <p>Traditional format ideal for corporate and executive positions</p>
+                        <span class="template-badge">Executive Choice</span>
+                    </div>
+                </div>
+                <div class="template-preview" data-template="creative">
+                    <div class="template-image">🎨</div>
+                    <div class="template-info">
+                        <h3>Creative Designer</h3>
+                        <p>Bold layout for creative professionals and designers</p>
+                        <span class="template-badge">Creative</span>
+                    </div>
+                </div>
+                <div class="template-preview" data-template="minimal">
+                    <div class="template-image">✨</div>
+                    <div class="template-info">
+                        <h3>Minimal Clean</h3>
+                        <p>Simple, elegant design focusing on content</p>
+                        <span class="template-badge">Minimalist</span>
+                    </div>
+                </div>
+                <div class="template-preview" data-template="tech">
+                    <div class="template-image">💻</div>
+                    <div class="template-info">
+                        <h3>Tech Industry</h3>
+                        <p>Optimized for software engineers and IT professionals</p>
+                        <span class="template-badge">Tech Focus</span>
+                    </div>
+                </div>
+                <div class="template-preview" data-template="executive">
+                    <div class="template-image">👔</div>
+                    <div class="template-info">
+                        <h3>Executive Premium</h3>
+                        <p>Sophisticated design for senior leadership roles</p>
+                        <span class="template-badge">Premium</span>
+                    </div>
                 </div>
             </div>
         </section>
 
         <section id="pricing" class="pricing">
-            <h2>Simple, Fair Pricing</h2>
+            <h2>Simple, Transparent Pricing</h2>
             <div class="pricing-grid">
                 <div class="pricing-card">
                     <h3>Free Trial</h3>
                     <div class="price">$0</div>
                     <ul>
                         <li>✓ 3 Free Documents</li>
-                        <li>✓ Watermarked PDFs</li>
-                        <li>✓ Basic Templates</li>
-                        <li>✓ Try before you buy</li>
+                        <li>✓ All Templates (Watermarked)</li>
+                        <li>✓ PDF Export</li>
+                        <li>✓ Basic Support</li>
                     </ul>
-                    <button class="btn-plan" data-plan="free">Get Started Free</button>
+                    <button class="btn-plan" data-plan="free">Get Started</button>
                 </div>
                 
                 <div class="pricing-card popular">
@@ -501,9 +731,9 @@
                     <ul>
                         <li>✓ Unlimited Documents</li>
                         <li>✓ No Watermarks</li>
-                        <li>✓ All Templates</li>
+                        <li>✓ All 10+ Templates</li>
                         <li>✓ Priority Support</li>
-                        <li>✓ Cancel anytime</li>
+                        <li>✓ Cancel Anytime</li>
                     </ul>
                     <button class="btn-plan" data-plan="subscription">Subscribe Now →</button>
                 </div>
@@ -514,9 +744,9 @@
                     <ul>
                         <li>✓ No Subscription</li>
                         <li>✓ No Watermarks</li>
-                        <li>✓ Pay only for what you use</li>
-                        <li>✓ $10 minimum purchase</li>
-                        <li>✓ Credits never expire</li>
+                        <li>✓ All Templates</li>
+                        <li>✓ $10 Minimum Purchase</li>
+                        <li>✓ Credits Never Expire</li>
                     </ul>
                     <button class="btn-plan" data-plan="pay_as_you_go">Buy Credits →</button>
                 </div>
@@ -525,6 +755,36 @@
 
         <section id="generator" class="generator" style="display: none;">
             <div class="container">
+                <div class="template-selector">
+                    <h3>Choose Your Template Style</h3>
+                    <div class="template-options">
+                        <div class="template-option active" data-template="modern">
+                            <div class="template-icon">📄</div>
+                            <div>Modern</div>
+                        </div>
+                        <div class="template-option" data-template="classic">
+                            <div class="template-icon">📑</div>
+                            <div>Classic</div>
+                        </div>
+                        <div class="template-option" data-template="creative">
+                            <div class="template-icon">🎨</div>
+                            <div>Creative</div>
+                        </div>
+                        <div class="template-option" data-template="minimal">
+                            <div class="template-icon">✨</div>
+                            <div>Minimal</div>
+                        </div>
+                        <div class="template-option" data-template="tech">
+                            <div class="template-icon">💻</div>
+                            <div>Tech</div>
+                        </div>
+                        <div class="template-option" data-template="executive">
+                            <div class="template-icon">👔</div>
+                            <div>Executive</div>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="tabs">
                     <button class="tab-btn active" data-tab="cv">📄 CV Generator</button>
                     <button class="tab-btn" data-tab="cover">✉️ Cover Letter Generator</button>
@@ -534,37 +794,39 @@
                     <form id="cvForm">
                         <div class="form-group">
                             <label>Full Name *</label>
-                            <input type="text" id="cvName" required placeholder="John Doe">
+                            <input type="text" id="cvName" required placeholder="ABBA AMINU">
                         </div>
                         <div class="form-group">
                             <label>Email *</label>
-                            <input type="email" id="cvEmail" required placeholder="john@example.com">
+                            <input type="email" id="cvEmail" required placeholder="tukurmuhammed902@gmail.com">
                         </div>
                         <div class="form-group">
-                            <label>Phone</label>
-                            <input type="tel" id="cvPhone" placeholder="+1234567890">
+                            <label>Phone *</label>
+                            <input type="tel" id="cvPhone" required placeholder="+234 816 661 4377">
+                        </div>
+                        <div class="form-group">
+                            <label>LinkedIn/Portfolio</label>
+                            <input type="text" id="cvLinkedin" placeholder="https://linkedin.com/in/yourprofile">
+                        </div>
+                        <div class="form-group">
+                            <label>Professional Summary *</label>
+                            <textarea id="cvSummary" rows="4" required placeholder="Highly motivated professional with experience in..."></textarea>
                         </div>
                         <div class="form-group">
                             <label>Work Experience *</label>
-                            <textarea id="cvExperience" rows="4" required placeholder="e.g., Software Engineer at Tech Corp (2020-2023): Led team of 5, increased efficiency by 30%..."></textarea>
+                            <textarea id="cvExperience" rows="6" required placeholder="Company Name | Position | Date
+• Achievement 1
+• Achievement 2"></textarea>
                         </div>
                         <div class="form-group">
                             <label>Education</label>
-                            <textarea id="cvEducation" rows="3" placeholder="e.g., B.Sc. Computer Science, University, 2020"></textarea>
+                            <textarea id="cvEducation" rows="3" placeholder="Degree | University | Year"></textarea>
                         </div>
                         <div class="form-group">
                             <label>Skills (comma-separated)</label>
-                            <input type="text" id="cvSkills" placeholder="Python, JavaScript, Project Management">
+                            <input type="text" id="cvSkills" placeholder="Python, Salesforce, Data Analysis, Project Management">
                         </div>
-                        <div class="form-group">
-                            <label>Template Style</label>
-                            <select id="cvTemplate">
-                                <option value="modern">Modern Professional</option>
-                                <option value="classic">Classic Executive</option>
-                                <option value="creative">Creative Designer</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="btn-generate">✨ Generate CV ✨</button>
+                        <button type="submit" class="btn-generate">✨ Generate Professional CV ✨</button>
                     </form>
                 </div>
                 
@@ -572,7 +834,7 @@
                     <form id="coverForm">
                         <div class="form-group">
                             <label>Your Name *</label>
-                            <input type="text" id="coverName" required placeholder="John Doe">
+                            <input type="text" id="coverName" required placeholder="ABBA AMINU">
                         </div>
                         <div class="form-group">
                             <label>Position Applying For *</label>
@@ -580,15 +842,15 @@
                         </div>
                         <div class="form-group">
                             <label>Company Name *</label>
-                            <input type="text" id="coverCompany" required placeholder="Google, Meta, etc.">
+                            <input type="text" id="coverCompany" required placeholder="Google">
                         </div>
                         <div class="form-group">
                             <label>Your Experience Summary *</label>
-                            <textarea id="coverExperience" rows="4" required placeholder="Brief overview of your relevant experience..."></textarea>
+                            <textarea id="coverExperience" rows="6" required placeholder="Brief overview of your relevant experience..."></textarea>
                         </div>
                         <div class="form-group">
                             <label>Key Skills</label>
-                            <input type="text" id="coverSkills" placeholder="e.g., Project Management, Data Analysis">
+                            <input type="text" id="coverSkills" placeholder="Python, Salesforce, Leadership">
                         </div>
                         <button type="submit" class="btn-generate">✨ Generate Cover Letter ✨</button>
                     </form>
@@ -615,6 +877,7 @@
             <div class="footer-section">
                 <h4>Quick Links</h4>
                 <a href="#features">Features</a>
+                <a href="#templates">Templates</a>
                 <a href="#pricing">Pricing</a>
             </div>
             <div class="footer-section">
@@ -624,26 +887,28 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>&copy; 2024 ABSON CV Generator. All rights reserved.</p>
+            <p>&copy; 2024 ABSON CV Genius. All rights reserved.</p>
         </div>
     </footer>
 
     <div id="loginModal" class="modal" style="display: none;">
         <div class="modal-content">
             <span class="close">&times;</span>
-            <h2>Get Started with ABSON CV</h2>
+            <h2>Get Started with ABSON CV Genius</h2>
             <form id="loginForm">
                 <input type="email" id="loginEmail" placeholder="Your Email Address" required>
                 <button type="submit" class="btn-primary">Generate Free API Key</button>
             </form>
-            <p class="info-text">✨ Get 3 free documents to try the service</p>
+            <p class="info-text">✨ Get 3 free CVs to try the service</p>
             <p class="info-text">💳 No credit card required for free trial</p>
+            <p class="info-text">🎨 Choose from 10+ professional templates</p>
         </div>
     </div>
 
     <script>
         let apiKey = localStorage.getItem('apiKey');
         let currentDocId = null;
+        let currentTemplate = 'modern';
 
         // DOM Elements
         const loginModal = document.getElementById('loginModal');
@@ -655,6 +920,20 @@
         const coverForm = document.getElementById('coverForm');
         const resultDiv = document.getElementById('result');
         const resultContent = document.getElementById('resultContent');
+
+        // Template selection
+        document.querySelectorAll('.template-option').forEach(opt => {
+            opt.onclick = () => {
+                document.querySelectorAll('.template-option').forEach(o => o.classList.remove('active'));
+                opt.classList.add('active');
+                currentTemplate = opt.dataset.template;
+                
+                // Apply template style to result preview
+                if (resultContent) {
+                    resultContent.className = `result-content template-${currentTemplate}`;
+                }
+            };
+        });
 
         function showLoginModal() {
             loginModal.style.display = 'flex';
@@ -686,7 +965,7 @@
                 generatorSection.style.display = 'block';
                 generatorSection.scrollIntoView({ behavior: 'smooth' });
                 
-                alert('Successfully registered! You have 3 free documents.');
+                alert('Welcome to ABSON CV Genius! You have 3 free generations.');
                 checkUserStatus();
             } catch (error) {
                 alert('Registration failed: ' + error.message);
@@ -712,10 +991,12 @@
                 name: document.getElementById('cvName').value,
                 email: document.getElementById('cvEmail').value,
                 phone: document.getElementById('cvPhone').value,
+                linkedin: document.getElementById('cvLinkedin').value,
+                summary: document.getElementById('cvSummary').value,
                 experience: document.getElementById('cvExperience').value,
                 education: document.getElementById('cvEducation').value,
                 skills: document.getElementById('cvSkills').value,
-                template: document.getElementById('cvTemplate').value
+                template: currentTemplate
             };
             
             await generateDocument('/api/generate-cv', data);
@@ -730,7 +1011,8 @@
                 position: document.getElementById('coverPosition').value,
                 company: document.getElementById('coverCompany').value,
                 experience: document.getElementById('coverExperience').value,
-                skills: document.getElementById('coverSkills').value
+                skills: document.getElementById('coverSkills').value,
+                template: currentTemplate
             };
             
             await generateDocument('/api/generate-cover', data);
@@ -739,7 +1021,7 @@
         async function generateDocument(endpoint, data) {
             const btn = document.querySelector('.btn-generate');
             const originalText = btn.textContent;
-            btn.textContent = 'Generating...';
+            btn.textContent = '⏳ Generating your professional document...';
             btn.disabled = true;
             
             try {
@@ -762,15 +1044,27 @@
                 }
                 
                 currentDocId = result.cv_id || result.cover_id;
-                resultContent.innerHTML = result.content.replace(/\n/g, '<br>');
+                
+                // Apply professional formatting
+                let formattedContent = result.content;
+                formattedContent = formattedContent.replace(/\n/g, '<br>');
+                formattedContent = `<div style="font-family: inherit;">
+                    ${formattedContent}
+                </div>`;
+                
+                resultContent.innerHTML = formattedContent;
+                resultContent.className = `result-content template-${currentTemplate}`;
                 resultDiv.style.display = 'block';
                 resultDiv.dataset.hasWatermark = result.has_watermark;
                 
                 if (result.free_remaining !== undefined) {
-                    alert(`Document generated! ${result.free_remaining} free documents remaining.`);
+                    alert(`✅ Document generated successfully! ${result.free_remaining} free documents remaining.`);
                 }
                 
                 checkUserStatus();
+                
+                // Scroll to result
+                resultDiv.scrollIntoView({ behavior: 'smooth' });
             } catch (error) {
                 alert('Generation failed: ' + error.message);
             } finally {
@@ -794,7 +1088,7 @@
                 
                 if (status.plan === 'free') {
                     statusBar.innerHTML = `
-                        <span>⚠️ Free trial: ${status.free_remaining} documents remaining (watermarked)</span>
+                        <span>⭐ Free Trial: ${status.free_remaining} documents remaining (Watermarked)</span>
                         <button onclick="upgradePrompt()" class="status-upgrade">Upgrade to Remove Watermark →</button>
                     `;
                 } else if (status.plan === 'pay_as_you_go') {
@@ -803,7 +1097,7 @@
                         <button onclick="buyMoreCredits()" class="status-upgrade">Buy More Credits →</button>
                     `;
                 } else if (status.plan === 'subscription') {
-                    statusBar.innerHTML = `<span>✨ Premium Active - No Watermarks! Unlimited Documents</span>`;
+                    statusBar.innerHTML = `<span>✨ Premium Active - Unlimited Documents! No Watermarks ✨</span>`;
                 }
                 
                 const existingBar = document.querySelector('.status-bar');
@@ -817,15 +1111,33 @@
         }
 
         window.upgradePrompt = function() {
-            alert('Upgrade options:\n\n$1/month - Unlimited documents, no watermarks\n$0.10/file - Pay as you go, no watermarks\n\nContact support to upgrade.');
+            const choice = confirm('🚀 Upgrade to Premium:\n\n✅ $1/month - Unlimited documents, no watermarks\n✅ $0.10/file - Pay as you go\n\nClick OK to subscribe or Cancel for pay-as-you-go');
+            if (choice) {
+                alert('Premium subscription coming soon! Contact support to upgrade.');
+            } else {
+                alert('Pay-as-you-go coming soon! Contact support to purchase credits.');
+            }
         };
 
         window.buyMoreCredits = function() {
-            alert('Pay-as-you-go: $0.10 per document, minimum $10 purchase.\n\nContact support to add credits.');
+            alert('Purchase credits: $10 = 100 documents, no watermarks.\n\nContact support to add credits.');
         };
 
         document.getElementById('exportPDF').onclick = async () => {
             if (!currentDocId) return;
+            
+            const hasWatermark = resultDiv.dataset.hasWatermark === 'true';
+            
+            if (hasWatermark) {
+                const confirmExport = confirm('⚠️ This document will have a watermark "Generated by ABSON CV Genius".\n\nUpgrade to $1/month or $0.10/file to remove watermarks.\n\nContinue with watermark?');
+                if (!confirmExport) {
+                    const upgrade = confirm('Would you like to upgrade to remove watermarks?');
+                    if (upgrade) {
+                        upgradePrompt();
+                    }
+                    return;
+                }
+            }
             
             try {
                 const response = await fetch(`/api/export-pdf/${currentDocId}`, {
@@ -836,8 +1148,9 @@
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `document_${currentDocId}.pdf`;
+                a.download = `professional_cv_${Date.now()}.pdf`;
                 a.click();
+                alert('✅ PDF exported successfully!');
             } catch (error) {
                 alert('Export failed: ' + error.message);
             }
@@ -846,7 +1159,7 @@
         document.getElementById('copyText').onclick = () => {
             const text = resultContent.innerText;
             navigator.clipboard.writeText(text);
-            alert('Copied to clipboard!');
+            alert('✅ Text copied to clipboard!');
         };
 
         document.getElementById('newDocument').onclick = () => {
@@ -860,9 +1173,23 @@
             btn.onclick = () => {
                 const plan = btn.dataset.plan;
                 if (plan === 'free') {
-                    alert('Free plan activated! You have 3 free documents to try.');
+                    alert('✅ Free plan activated! You have 3 free documents.');
                 } else {
-                    alert('Premium features coming soon! Contact us to upgrade.');
+                    alert('🚀 Premium features coming soon! Contact us at support@absoncv.com');
+                }
+            };
+        });
+
+        // Template preview clicks
+        document.querySelectorAll('.template-preview').forEach(preview => {
+            preview.onclick = () => {
+                const template = preview.dataset.template;
+                if (apiKey) {
+                    generatorSection.style.display = 'block';
+                    generatorSection.scrollIntoView({ behavior: 'smooth' });
+                    document.querySelector(`.template-option[data-template="${template}"]`).click();
+                } else {
+                    showLoginModal();
                 }
             };
         });
