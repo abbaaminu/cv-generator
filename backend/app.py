@@ -24,9 +24,11 @@ GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
     model = genai.GenerativeModel('models/gemini-2.5-flash')
+    print(f"✅ Gemini API configured with models/gemini-2.5-flash")
 else:
-    print("WARNING: GEMINI_API_KEY not set")
+    print("❌ GEMINI_API_KEY environment variable not set")
     model = None
+
 
 # Paystack Configuration
 PAYSTACK_SECRET_KEY = os.getenv('PAYSTACK_SECRET_KEY')
