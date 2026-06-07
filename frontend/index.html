@@ -1,43 +1,233 @@
-<section id="pricing" class="pricing">
-    <h2>Simple, Fair Pricing</h2>
-    <div class="pricing-grid">
-        <div class="pricing-card">
-            <h3>Free Trial</h3>
-            <div class="price">$0</div>
-            <ul>
-                <li>✓ 3 Free Documents</li>
-                <li>✓ Watermarked PDFs</li>
-                <li>✓ Basic Templates</li>
-                <li>✓ Try before you buy</li>
-            </ul>
-            <button class="btn-plan" data-plan="free">Get Started Free</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ABSON CV Generator - AI-Powered CV & Cover Letter Creator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">🚀 ABSON CV Genius</div>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+                <button id="loginBtn" class="btn-secondary">Login</button>
+            </div>
         </div>
-        
-        <div class="pricing-card popular">
-            <div class="popular-badge">Best Value</div>
-            <h3>Monthly Subscription</h3>
-            <div class="price">$1<span>/month</span></div>
-            <ul>
-                <li>✓ Unlimited Documents</li>
-                <li>✓ No Watermarks</li>
-                <li>✓ All Templates</li>
-                <li>✓ Priority Support</li>
-                <li>✓ Cancel anytime</li>
-            </ul>
-            <button class="btn-plan" data-plan="subscription">Subscribe Now →</button>
-        </div>
-        
-        <div class="pricing-card">
-            <h3>Pay As You Go</h3>
-            <div class="price">$0.10<span>/file</span></div>
-            <ul>
-                <li>✓ No Subscription</li>
-                <li>✓ No Watermarks</li>
-                <li>✓ Pay only for what you use</li>
-                <li>✓ $10 minimum purchase</li>
-                <li>✓ Credits never expire</li>
-            </ul>
-            <button class="btn-plan" data-plan="pay_as_you_go">Buy Credits →</button>
+    </nav>
+
+    <main>
+        <section class="hero">
+            <h1>Create Professional CVs & Cover Letters in Minutes</h1>
+            <p>Powered by AI - Get hired faster with personalized documents</p>
+            <button id="getStartedBtn" class="btn-primary">Get Started Free</button>
+        </section>
+
+        <section id="features" class="features">
+            <h2>Features</h2>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">📝</div>
+                    <h3>AI-Powered Generation</h3>
+                    <p>Get tailored CVs and cover letters using advanced AI</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎨</div>
+                    <h3>Multiple Templates</h3>
+                    <p>Choose from professional templates for any industry</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">📄</div>
+                    <h3>Export Any Format</h3>
+                    <p>Download as PDF, DOCX, or share via link</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Fast Generation</h3>
+                    <p>Get your documents in seconds, not hours</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💰</div>
+                    <h3>Affordable Pricing</h3>
+                    <p>From just $1/month or $0.10 per document</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🌍</div>
+                    <h3>African Payments</h3>
+                    <p>Pay with cards, bank transfer, USSD, mobile money</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="pricing" class="pricing">
+            <h2>Simple, Fair Pricing</h2>
+            <div class="pricing-grid">
+                <div class="pricing-card">
+                    <h3>Free Trial</h3>
+                    <div class="price">$0</div>
+                    <ul>
+                        <li>✓ 3 Free Documents</li>
+                        <li>✓ Watermarked PDFs</li>
+                        <li>✓ Basic Templates</li>
+                        <li>✓ Try before you buy</li>
+                        <li>✓ No credit card required</li>
+                    </ul>
+                    <button class="btn-plan" data-plan="free">Get Started Free</button>
+                </div>
+                
+                <div class="pricing-card popular">
+                    <div class="popular-badge">Best Value</div>
+                    <h3>Monthly Subscription</h3>
+                    <div class="price">$1<span>/month</span></div>
+                    <ul>
+                        <li>✓ Unlimited Documents</li>
+                        <li>✓ No Watermarks</li>
+                        <li>✓ All Templates</li>
+                        <li>✓ Priority Support</li>
+                        <li>✓ Cancel anytime</li>
+                        <li>✓ Pay with Paystack</li>
+                    </ul>
+                    <button class="btn-plan" data-plan="subscription">Subscribe Now →</button>
+                </div>
+                
+                <div class="pricing-card">
+                    <h3>Pay As You Go</h3>
+                    <div class="price">$0.10<span>/file</span></div>
+                    <ul>
+                        <li>✓ No Subscription</li>
+                        <li>✓ No Watermarks</li>
+                        <li>✓ Pay only for what you use</li>
+                        <li>✓ $10 minimum purchase</li>
+                        <li>✓ Credits never expire</li>
+                        <li>✓ Multiple payment methods</li>
+                    </ul>
+                    <button class="btn-plan" data-plan="pay_as_you_go">Buy Credits →</button>
+                </div>
+            </div>
+        </section>
+
+        <section id="generator" class="generator" style="display: none;">
+            <div class="container">
+                <div class="tabs">
+                    <button class="tab-btn active" data-tab="cv">📄 CV Generator</button>
+                    <button class="tab-btn" data-tab="cover">✉️ Cover Letter Generator</button>
+                </div>
+                
+                <div id="cv-tab" class="tab-content active">
+                    <form id="cvForm">
+                        <div class="form-group">
+                            <label>Full Name *</label>
+                            <input type="text" id="cvName" required placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label>Email *</label>
+                            <input type="email" id="cvEmail" required placeholder="john@example.com">
+                        </div>
+                        <div class="form-group">
+                            <label>Phone</label>
+                            <input type="tel" id="cvPhone" placeholder="+1234567890">
+                        </div>
+                        <div class="form-group">
+                            <label>Work Experience *</label>
+                            <textarea id="cvExperience" rows="4" required placeholder="e.g., Software Engineer at Tech Corp (2020-2023): Led team of 5, increased efficiency by 30%, Developed 10+ microservices..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Education</label>
+                            <textarea id="cvEducation" rows="3" placeholder="e.g., B.Sc. Computer Science, University of Lagos, 2020"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Skills (comma-separated)</label>
+                            <input type="text" id="cvSkills" placeholder="Python, JavaScript, Project Management, Leadership">
+                        </div>
+                        <div class="form-group">
+                            <label>Template Style</label>
+                            <select id="cvTemplate">
+                                <option value="modern">Modern Professional</option>
+                                <option value="classic">Classic Executive</option>
+                                <option value="creative">Creative Designer</option>
+                                <option value="tech">Tech Industry</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn-generate">✨ Generate CV ✨</button>
+                    </form>
+                </div>
+                
+                <div id="cover-tab" class="tab-content" style="display: none;">
+                    <form id="coverForm">
+                        <div class="form-group">
+                            <label>Your Name *</label>
+                            <input type="text" id="coverName" required placeholder="John Doe">
+                        </div>
+                        <div class="form-group">
+                            <label>Position Applying For *</label>
+                            <input type="text" id="coverPosition" required placeholder="Senior Software Engineer">
+                        </div>
+                        <div class="form-group">
+                            <label>Company Name *</label>
+                            <input type="text" id="coverCompany" required placeholder="Google, Meta, etc.">
+                        </div>
+                        <div class="form-group">
+                            <label>Your Experience Summary *</label>
+                            <textarea id="coverExperience" rows="4" required placeholder="Brief overview of your relevant experience..."></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Key Skills</label>
+                            <input type="text" id="coverSkills" placeholder="e.g., Project Management, Data Analysis, Communication">
+                        </div>
+                        <button type="submit" class="btn-generate">✨ Generate Cover Letter ✨</button>
+                    </form>
+                </div>
+                
+                <div id="result" class="result" style="display: none;">
+                    <div id="resultContent" class="result-content"></div>
+                    <div class="result-actions">
+                        <button id="exportPDF" class="btn-export">📥 Export as PDF</button>
+                        <button id="copyText" class="btn-copy">📋 Copy Text</button>
+                        <button id="newDocument" class="btn-new">➕ Create New</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="loginModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Get Started with ABSON CV</h2>
+            <form id="loginForm">
+                <input type="email" id="loginEmail" placeholder="Your Email Address" required>
+                <button type="submit" class="btn-primary">Generate Free API Key</button>
+            </form>
+            <p class="info-text">✨ Get 3 free documents to try the service</p>
+            <p class="info-text">💳 No credit card required for free trial</p>
         </div>
     </div>
-</section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>ABSON CV Genius</h4>
+                <p>Create professional CVs and cover letters with AI</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+                <a href="#" id="contactLink">Contact</a>
+            </div>
+            <div class="footer-section">
+                <h4>Payment Methods</h4>
+                <p>💳 Cards | 🏦 Bank Transfer | 📱 USSD | 💰 Mobile Money</p>
+                <p>Powered by Paystack - Secure African Payments</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 ABSON CV Generator. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
