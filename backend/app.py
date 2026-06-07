@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, send_from_directory
 from flask_cors import CORS
 import openai
 import os
@@ -12,8 +12,9 @@ from functools import wraps
 import secrets
 import hashlib
 import hmac
+from pathlib import Path
 
-app = Flask(__name__, static_folder='../frontend', static_url_path='')
+app = Flask(__name__, static_folder='../frontend', static_url_path='/static')
 CORS(app)
 
 # Configuration
@@ -37,13 +38,13 @@ PLANS = {
         'monthly_price': 1.00,
         'per_file_price': 0,
         'has_watermark': False,
-        'plan_code': 'your_plan_code_here'  # Create this in Paystack Dashboard
+        'plan_code': os.getenv('PAYSTACK_PLAN_CODE', 'PLN_abc123')
     },
     'pay_as_you_go': {
         'monthly_price': 0,
         'per_file_price': 0.10,
         'has_watermark': False,
-        'min_purchase': 10  # $10 minimum
+        'min_purchase': 10
     }
 }
 
@@ -74,7 +75,6 @@ def can_generate(user):
     
     elif plan == 'subscription':
         if user.get('subscription_active', False):
-            # Monthly fair usage limit: 100 documents
             if current_month not in user['usage']:
                 user['usage'][current_month] = 0
             if user['usage'][current_month] >= 100:
@@ -106,6 +106,8 @@ def deduct_credits(user):
 
 def verify_paystack_signature(request_data, signature):
     """Verify Paystack webhook signature for security"""
+    if not PAYSTACK_SECRET_KEY or not signature:
+        return False
     expected_signature = hmac.new(
         PAYSTACK_SECRET_KEY.encode('utf-8'),
         request_data,
@@ -113,9 +115,50 @@ def verify_paystack_signature(request_data, signature):
     ).hexdigest()
     return hmac.compare_digest(expected_signature, signature)
 
+# Serve frontend files
 @app.route('/')
 def serve_frontend():
-    return send_file('../frontend/index.html')
+    try:
+        # Try to find index.html in different possible locations
+        frontend_paths = [
+            '../frontend/index.html',
+            'frontend/index.html',
+            './frontend/index.html',
+            '/app/frontend/index.html',
+            'index.html'
+        ]
+        
+        for path in frontend_paths:
+            if os.path.exists(path):
+                return send_file(path)
+        
+        # If file not found, return error with instructions
+        return jsonify({
+            'error': 'Frontend files not found',
+            'message': 'Please ensure frontend/index.html exists',
+            'current_directory': os.getcwd(),
+            'files': os.listdir('.')
+        }), 500
+    except Exception as e:
+        return jsonify({'error': str(e), 'cwd': os.getcwd()}), 500
+
+# Also serve static files
+@app.route('/<path:filename>')
+def serve_static(filename):
+    if filename.endswith('.css') or filename.endswith('.js'):
+        # Try to find in frontend folder
+        potential_paths = [
+            f'../frontend/{filename}',
+            f'frontend/{filename}',
+            f'./frontend/{filename}',
+            f'/app/frontend/{filename}'
+        ]
+        
+        for path in potential_paths:
+            if os.path.exists(path):
+                return send_file(path)
+    
+    return jsonify({'error': 'File not found'}), 404
 
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -137,7 +180,7 @@ def register():
         'api_key': api_key, 
         'plan': 'free',
         'free_remaining': 3,
-        'paystack_public_key': PAYSTACK_PUBLIC_KEY
+        'paystack_public_key': PAYSTACK_PUBLIC_KEY or 'test_key'
     })
 
 @app.route('/api/generate-cv', methods=['POST'])
@@ -264,15 +307,15 @@ def initiate_payment():
     data = request.json
     payment_type = data.get('type')  # 'credits' or 'subscription'
     
+    if not PAYSTACK_SECRET_KEY:
+        return jsonify({'error': 'Paystack not configured. Please add PAYSTACK_SECRET_KEY to environment variables.'}), 500
+    
     if payment_type == 'credits':
-        amount = data.get('amount', 10)  # Amount in dollars
-        # Convert to kobo/cents (Paystack uses smallest currency unit)
+        amount = data.get('amount', 10)
         amount_in_cents = int(amount * 100)
         
-        # Reference for this transaction
         reference = f"PAY-{secrets.token_urlsafe(12)}-{datetime.now().strftime('%Y%m%d%H%M%S')}"
         
-        # Initialize transaction with Paystack
         headers = {
             "Authorization": f"Bearer {PAYSTACK_SECRET_KEY}",
             "Content-Type": "application/json"
@@ -285,17 +328,17 @@ def initiate_payment():
             "reference": reference,
             "metadata": {
                 "user_email": user['email'],
-                "credit_amount": amount * 10,  # $1 = 10 files
+                "credit_amount": amount * 10,
                 "payment_type": "credits"
-            },
-            "callback_url": "https://yourdomain.com/payment-callback"
+            }
         }
         
         try:
             response = requests.post(
                 f"{PAYSTACK_BASE_URL}/transaction/initialize",
                 headers=headers,
-                json=payload
+                json=payload,
+                timeout=30
             )
             
             result = response.json()
@@ -312,8 +355,6 @@ def initiate_payment():
             return jsonify({'error': str(e)}), 500
             
     elif payment_type == 'subscription':
-        # Create subscription plan in Paystack Dashboard first
-        # Then use the plan code
         headers = {
             "Authorization": f"Bearer {PAYSTACK_SECRET_KEY}",
             "Content-Type": "application/json"
@@ -325,15 +366,15 @@ def initiate_payment():
             "metadata": {
                 "user_email": user['email'],
                 "plan": "subscription"
-            },
-            "callback_url": "https://yourdomain.com/subscription-callback"
+            }
         }
         
         try:
             response = requests.post(
                 f"{PAYSTACK_BASE_URL}/transaction/initialize",
                 headers=headers,
-                json=payload
+                json=payload,
+                timeout=30
             )
             
             result = response.json()
@@ -358,6 +399,9 @@ def verify_payment():
     data = request.json
     reference = data.get('reference')
     
+    if not PAYSTACK_SECRET_KEY:
+        return jsonify({'error': 'Paystack not configured'}), 500
+    
     headers = {
         "Authorization": f"Bearer {PAYSTACK_SECRET_KEY}",
         "Content-Type": "application/json"
@@ -366,21 +410,19 @@ def verify_payment():
     try:
         response = requests.get(
             f"{PAYSTACK_BASE_URL}/transaction/verify/{reference}",
-            headers=headers
+            headers=headers,
+            timeout=30
         )
         
         result = response.json()
         
         if result['status'] and result['data']['status'] == 'success':
-            # Payment successful
             metadata = result['data']['metadata']
             
             if metadata.get('payment_type') == 'credits':
-                # Add credits to user
                 credit_amount = float(metadata.get('credit_amount', 0))
                 user_credits[metadata['user_email']] = user_credits.get(metadata['user_email'], 0) + credit_amount
                 
-                # Update plan if user was free
                 for api_key, user_data in users.items():
                     if user_data['email'] == metadata['user_email'] and user_data['plan'] == 'free':
                         user_data['plan'] = 'pay_as_you_go'
@@ -393,7 +435,6 @@ def verify_payment():
                 })
                 
             elif metadata.get('plan') == 'subscription':
-                # Activate subscription
                 for api_key, user_data in users.items():
                     if user_data['email'] == metadata['user_email']:
                         user_data['plan'] = 'subscription'
@@ -416,14 +457,15 @@ def paystack_webhook():
     signature = request.headers.get('x-paystack-signature')
     raw_body = request.get_data()
     
-    # Verify webhook signature for security
+    if not PAYSTACK_SECRET_KEY:
+        return jsonify({'error': 'Paystack not configured'}), 500
+    
     if not verify_paystack_signature(raw_body, signature):
         return jsonify({'error': 'Invalid signature'}), 401
     
     event = request.json
     
     if event['event'] == 'charge.success':
-        # Handle successful charge
         data = event['data']
         metadata = data.get('metadata', {})
         
@@ -431,7 +473,6 @@ def paystack_webhook():
             credit_amount = float(metadata.get('credit_amount', 0))
             user_credits[metadata['user_email']] = user_credits.get(metadata['user_email'], 0) + credit_amount
             
-            # Update user plan if needed
             for api_key, user in users.items():
                 if user['email'] == metadata['user_email'] and user['plan'] == 'free':
                     user['plan'] = 'pay_as_you_go'
@@ -445,7 +486,6 @@ def paystack_webhook():
                     break
     
     elif event['event'] == 'subscription.disable':
-        # Handle subscription cancellation
         data = event['data']
         email = data.get('email')
         for api_key, user in users.items():
@@ -464,7 +504,6 @@ def export_pdf(doc_id):
     
     doc = generations[doc_id]
     
-    # Create PDF with content
     buffer = BytesIO()
     c = canvas.Canvas(buffer, pagesize=letter)
     width, height = letter
@@ -495,7 +534,6 @@ def export_pdf(doc_id):
             c.drawString(50, y, line)
             y -= 15
     
-    # Add watermark if needed
     if doc['has_watermark']:
         c.saveState()
         c.setFont("Helvetica", 16)
@@ -528,8 +566,9 @@ def user_status():
         'credits': credits,
         'files_from_credits': int(credits / 0.10) if credits > 0 else 0,
         'subscription_active': user.get('subscription_active', False),
-        'paystack_public_key': PAYSTACK_PUBLIC_KEY
+        'paystack_public_key': PAYSTACK_PUBLIC_KEY or 'test_key'
     })
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(debug=False, host='0.0.0.0', port=port)
