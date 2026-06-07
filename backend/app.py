@@ -1,6 +1,6 @@
-from flask import Flask, request, jsonify, send_file, send_from_directory
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
-import openai
+import google.generativeai as genai
 import os
 import requests
 from reportlab.pdfgen import canvas
@@ -12,14 +12,21 @@ from functools import wraps
 import secrets
 import hashlib
 import hmac
-from pathlib import Path
 
 app = Flask(__name__, static_folder='../frontend', static_url_path='/static')
 CORS(app)
 
 # Configuration
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', secrets.token_hex(32))
-openai.api_key = os.getenv('OPENAI_API_KEY')
+
+# Configure Gemini API
+GEMINI_API_KEY = os.getenv('GEMINI_API_KEY')
+if GEMINI_API_KEY:
+    genai.configure(api_key=GEMINI_API_KEY)
+    model = genai.GenerativeModel('gemini-pro')
+else:
+    print("WARNING: GEMINI_API_KEY not set")
+    model = None
 
 # Paystack Configuration
 PAYSTACK_SECRET_KEY = os.getenv('PAYSTACK_SECRET_KEY')
@@ -48,7 +55,7 @@ PLANS = {
     }
 }
 
-# User database (use real DB in production)
+# User database
 users = {}
 user_credits = {}
 generations = {}
@@ -104,61 +111,12 @@ def deduct_credits(user):
         current_month = datetime.now().strftime('%Y-%m')
         user['usage'][current_month] = user['usage'].get(current_month, 0) + 1
 
-def verify_paystack_signature(request_data, signature):
-    """Verify Paystack webhook signature for security"""
-    if not PAYSTACK_SECRET_KEY or not signature:
-        return False
-    expected_signature = hmac.new(
-        PAYSTACK_SECRET_KEY.encode('utf-8'),
-        request_data,
-        hashlib.sha512
-    ).hexdigest()
-    return hmac.compare_digest(expected_signature, signature)
-
-# Serve frontend files
 @app.route('/')
 def serve_frontend():
     try:
-        # Try to find index.html in different possible locations
-        frontend_paths = [
-            '../frontend/index.html',
-            'frontend/index.html',
-            './frontend/index.html',
-            '/app/frontend/index.html',
-            'index.html'
-        ]
-        
-        for path in frontend_paths:
-            if os.path.exists(path):
-                return send_file(path)
-        
-        # If file not found, return error with instructions
-        return jsonify({
-            'error': 'Frontend files not found',
-            'message': 'Please ensure frontend/index.html exists',
-            'current_directory': os.getcwd(),
-            'files': os.listdir('.')
-        }), 500
-    except Exception as e:
-        return jsonify({'error': str(e), 'cwd': os.getcwd()}), 500
-
-# Also serve static files
-@app.route('/<path:filename>')
-def serve_static(filename):
-    if filename.endswith('.css') or filename.endswith('.js'):
-        # Try to find in frontend folder
-        potential_paths = [
-            f'../frontend/{filename}',
-            f'frontend/{filename}',
-            f'./frontend/{filename}',
-            f'/app/frontend/{filename}'
-        ]
-        
-        for path in potential_paths:
-            if os.path.exists(path):
-                return send_file(path)
-    
-    return jsonify({'error': 'File not found'}), 404
+        return send_file('../frontend/index.html')
+    except:
+        return send_file('frontend/index.html')
 
 @app.route('/api/register', methods=['POST'])
 def register():
@@ -205,16 +163,16 @@ def generate_cv():
     Template Style: {data.get('template', 'modern')}
     
     Format the CV professionally with clear sections. Use markdown formatting.
+    Make it look modern and professional.
     """
     
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=1000
-        )
+        if not model:
+            return jsonify({'error': 'Gemini API not configured. Please add GEMINI_API_KEY to environment variables.'}), 500
         
-        generated_cv = response.choices[0].message.content
+        # Use Gemini instead of OpenAI
+        response = model.generate_content(prompt)
+        generated_cv = response.text
         
         deduct_credits(user)
         
@@ -262,16 +220,15 @@ def generate_cover():
     Key Skills: {data.get('skills')}
     
     Make it persuasive and tailored to the position. Use markdown formatting.
+    Keep it concise but impactful.
     """
     
     try:
-        response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}],
-            max_tokens=800
-        )
+        if not model:
+            return jsonify({'error': 'Gemini API not configured. Please add GEMINI_API_KEY to environment variables.'}), 500
         
-        generated_cover = response.choices[0].message.content
+        response = model.generate_content(prompt)
+        generated_cover = response.text
         
         deduct_credits(user)
         
@@ -298,203 +255,6 @@ def generate_cover():
         
     except Exception as e:
         return jsonify({'error': str(e)}), 500
-
-@app.route('/api/initiate-payment', methods=['POST'])
-@require_auth
-def initiate_payment():
-    """Initialize Paystack payment for credits or subscription"""
-    user = request.user
-    data = request.json
-    payment_type = data.get('type')  # 'credits' or 'subscription'
-    
-    if not PAYSTACK_SECRET_KEY:
-        return jsonify({'error': 'Paystack not configured. Please add PAYSTACK_SECRET_KEY to environment variables.'}), 500
-    
-    if payment_type == 'credits':
-        amount = data.get('amount', 10)
-        amount_in_cents = int(amount * 100)
-        
-        reference = f"PAY-{secrets.token_urlsafe(12)}-{datetime.now().strftime('%Y%m%d%H%M%S')}"
-        
-        headers = {
-            "Authorization": f"Bearer {PAYSTACK_SECRET_KEY}",
-            "Content-Type": "application/json"
-        }
-        
-        payload = {
-            "email": user['email'],
-            "amount": amount_in_cents,
-            "currency": "USD",
-            "reference": reference,
-            "metadata": {
-                "user_email": user['email'],
-                "credit_amount": amount * 10,
-                "payment_type": "credits"
-            }
-        }
-        
-        try:
-            response = requests.post(
-                f"{PAYSTACK_BASE_URL}/transaction/initialize",
-                headers=headers,
-                json=payload,
-                timeout=30
-            )
-            
-            result = response.json()
-            
-            if result['status']:
-                return jsonify({
-                    'authorization_url': result['data']['authorization_url'],
-                    'reference': reference
-                })
-            else:
-                return jsonify({'error': result['message']}), 400
-                
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
-            
-    elif payment_type == 'subscription':
-        headers = {
-            "Authorization": f"Bearer {PAYSTACK_SECRET_KEY}",
-            "Content-Type": "application/json"
-        }
-        
-        payload = {
-            "email": user['email'],
-            "plan": PLANS['subscription']['plan_code'],
-            "metadata": {
-                "user_email": user['email'],
-                "plan": "subscription"
-            }
-        }
-        
-        try:
-            response = requests.post(
-                f"{PAYSTACK_BASE_URL}/transaction/initialize",
-                headers=headers,
-                json=payload,
-                timeout=30
-            )
-            
-            result = response.json()
-            
-            if result['status']:
-                return jsonify({
-                    'authorization_url': result['data']['authorization_url'],
-                    'reference': result['data']['reference']
-                })
-            else:
-                return jsonify({'error': result['message']}), 400
-                
-        except Exception as e:
-            return jsonify({'error': str(e)}), 500
-    
-    return jsonify({'error': 'Invalid payment type'}), 400
-
-@app.route('/api/verify-payment', methods=['POST'])
-@require_auth
-def verify_payment():
-    """Verify payment status with Paystack"""
-    data = request.json
-    reference = data.get('reference')
-    
-    if not PAYSTACK_SECRET_KEY:
-        return jsonify({'error': 'Paystack not configured'}), 500
-    
-    headers = {
-        "Authorization": f"Bearer {PAYSTACK_SECRET_KEY}",
-        "Content-Type": "application/json"
-    }
-    
-    try:
-        response = requests.get(
-            f"{PAYSTACK_BASE_URL}/transaction/verify/{reference}",
-            headers=headers,
-            timeout=30
-        )
-        
-        result = response.json()
-        
-        if result['status'] and result['data']['status'] == 'success':
-            metadata = result['data']['metadata']
-            
-            if metadata.get('payment_type') == 'credits':
-                credit_amount = float(metadata.get('credit_amount', 0))
-                user_credits[metadata['user_email']] = user_credits.get(metadata['user_email'], 0) + credit_amount
-                
-                for api_key, user_data in users.items():
-                    if user_data['email'] == metadata['user_email'] and user_data['plan'] == 'free':
-                        user_data['plan'] = 'pay_as_you_go'
-                        break
-                        
-                return jsonify({
-                    'status': 'success',
-                    'message': f'Added {credit_amount} credits to your account',
-                    'credits': user_credits.get(metadata['user_email'], 0)
-                })
-                
-            elif metadata.get('plan') == 'subscription':
-                for api_key, user_data in users.items():
-                    if user_data['email'] == metadata['user_email']:
-                        user_data['plan'] = 'subscription'
-                        user_data['subscription_active'] = True
-                        break
-                        
-                return jsonify({
-                    'status': 'success',
-                    'message': 'Subscription activated! No watermarks on your documents.'
-                })
-        
-        return jsonify({'status': 'failed', 'message': 'Payment verification failed'}), 400
-        
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-
-@app.route('/api/webhook/paystack', methods=['POST'])
-def paystack_webhook():
-    """Handle Paystack webhook events"""
-    signature = request.headers.get('x-paystack-signature')
-    raw_body = request.get_data()
-    
-    if not PAYSTACK_SECRET_KEY:
-        return jsonify({'error': 'Paystack not configured'}), 500
-    
-    if not verify_paystack_signature(raw_body, signature):
-        return jsonify({'error': 'Invalid signature'}), 401
-    
-    event = request.json
-    
-    if event['event'] == 'charge.success':
-        data = event['data']
-        metadata = data.get('metadata', {})
-        
-        if metadata.get('payment_type') == 'credits':
-            credit_amount = float(metadata.get('credit_amount', 0))
-            user_credits[metadata['user_email']] = user_credits.get(metadata['user_email'], 0) + credit_amount
-            
-            for api_key, user in users.items():
-                if user['email'] == metadata['user_email'] and user['plan'] == 'free':
-                    user['plan'] = 'pay_as_you_go'
-                    break
-                    
-        elif metadata.get('plan') == 'subscription':
-            for api_key, user in users.items():
-                if user['email'] == metadata['user_email']:
-                    user['plan'] = 'subscription'
-                    user['subscription_active'] = True
-                    break
-    
-    elif event['event'] == 'subscription.disable':
-        data = event['data']
-        email = data.get('email')
-        for api_key, user in users.items():
-            if user['email'] == email:
-                user['subscription_active'] = False
-                user['plan'] = 'pay_as_you_go' if user_credits.get(email, 0) > 0 else 'free'
-                break
-    
-    return jsonify({'status': 'success'}), 200
 
 @app.route('/api/export-pdf/<doc_id>', methods=['GET'])
 @require_auth
