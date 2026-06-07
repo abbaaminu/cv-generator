@@ -4,7 +4,435 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ABSON CV Generator - AI-Powered CV & Cover Letter Creator</title>
-    <link rel="stylesheet" href="style.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            color: #333;
+            line-height: 1.6;
+            background: #f7fafc;
+        }
+
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4F46E5;
+        }
+
+        .nav-links a {
+            margin-left: 2rem;
+            text-decoration: none;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: #4F46E5;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #4F46E5;
+            color: #4F46E5;
+            padding: 0.5rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: #4F46E5;
+            color: white;
+        }
+
+        .btn-primary {
+            background: #4F46E5;
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+        }
+
+        .hero {
+            text-align: center;
+            padding: 8rem 2rem 4rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+
+        .features {
+            padding: 4rem 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .features h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 2rem;
+            border-radius: 12px;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .pricing {
+            background: #f7fafc;
+            padding: 4rem 2rem;
+        }
+
+        .pricing h2 {
+            text-align: center;
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .pricing-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .pricing-card.popular {
+            border: 2px solid #4F46E5;
+            transform: scale(1.05);
+        }
+
+        .popular-badge {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #4F46E5;
+            color: white;
+            padding: 0.25rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+        }
+
+        .price {
+            font-size: 3rem;
+            font-weight: bold;
+            margin: 1rem 0;
+        }
+
+        .price span {
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .pricing-card ul {
+            list-style: none;
+            margin: 2rem 0;
+        }
+
+        .pricing-card li {
+            margin: 0.5rem 0;
+            color: #666;
+        }
+
+        .btn-plan {
+            background: #4F46E5;
+            color: white;
+            border: none;
+            padding: 0.75rem 2rem;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+        }
+
+        .generator {
+            padding: 6rem 2rem 4rem;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 1rem;
+            background: #f0f0f0;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: #4F46E5;
+            color: white;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-family: inherit;
+        }
+
+        .btn-generate {
+            width: 100%;
+            background: #4F46E5;
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+        }
+
+        .result {
+            margin-top: 2rem;
+            padding: 2rem;
+            background: #f9fafb;
+            border-radius: 12px;
+        }
+
+        .result-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin: 1rem 0;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .result-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .btn-export, .btn-copy, .btn-new {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        .btn-export {
+            background: #10B981;
+            color: white;
+        }
+
+        .btn-copy {
+            background: #3B82F6;
+            color: white;
+        }
+
+        .btn-new {
+            background: #6B7280;
+            color: white;
+        }
+
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+        }
+
+        .close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .status-bar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .status-upgrade {
+            background: white;
+            color: #4F46E5;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .watermark-warning {
+            background: #FEF3C7;
+            border-left: 4px solid #F59E0B;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 4px;
+            color: #92400E;
+        }
+
+        .watermark-warning a {
+            color: #4F46E5;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .footer {
+            background: #1a1a2e;
+            color: white;
+            padding: 3rem 2rem 1rem;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-section h4 {
+            margin-bottom: 1rem;
+            color: #4F46E5;
+        }
+
+        .footer-section a {
+            display: block;
+            color: #ccc;
+            text-decoration: none;
+            margin: 0.5rem 0;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #333;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 2rem; }
+            .pricing-card.popular { transform: scale(1); }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .result-actions { flex-direction: column; }
+            .status-bar { flex-direction: column; text-align: center; }
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -48,16 +476,6 @@
                     <h3>Fast Generation</h3>
                     <p>Get your documents in seconds, not hours</p>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">💰</div>
-                    <h3>Affordable Pricing</h3>
-                    <p>From just $1/month or $0.10 per document</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🌍</div>
-                    <h3>African Payments</h3>
-                    <p>Pay with cards, bank transfer, USSD, mobile money</p>
-                </div>
             </div>
         </section>
 
@@ -72,7 +490,6 @@
                         <li>✓ Watermarked PDFs</li>
                         <li>✓ Basic Templates</li>
                         <li>✓ Try before you buy</li>
-                        <li>✓ No credit card required</li>
                     </ul>
                     <button class="btn-plan" data-plan="free">Get Started Free</button>
                 </div>
@@ -87,7 +504,6 @@
                         <li>✓ All Templates</li>
                         <li>✓ Priority Support</li>
                         <li>✓ Cancel anytime</li>
-                        <li>✓ Pay with Paystack</li>
                     </ul>
                     <button class="btn-plan" data-plan="subscription">Subscribe Now →</button>
                 </div>
@@ -101,7 +517,6 @@
                         <li>✓ Pay only for what you use</li>
                         <li>✓ $10 minimum purchase</li>
                         <li>✓ Credits never expire</li>
-                        <li>✓ Multiple payment methods</li>
                     </ul>
                     <button class="btn-plan" data-plan="pay_as_you_go">Buy Credits →</button>
                 </div>
@@ -131,15 +546,15 @@
                         </div>
                         <div class="form-group">
                             <label>Work Experience *</label>
-                            <textarea id="cvExperience" rows="4" required placeholder="e.g., Software Engineer at Tech Corp (2020-2023): Led team of 5, increased efficiency by 30%, Developed 10+ microservices..."></textarea>
+                            <textarea id="cvExperience" rows="4" required placeholder="e.g., Software Engineer at Tech Corp (2020-2023): Led team of 5, increased efficiency by 30%..."></textarea>
                         </div>
                         <div class="form-group">
                             <label>Education</label>
-                            <textarea id="cvEducation" rows="3" placeholder="e.g., B.Sc. Computer Science, University of Lagos, 2020"></textarea>
+                            <textarea id="cvEducation" rows="3" placeholder="e.g., B.Sc. Computer Science, University, 2020"></textarea>
                         </div>
                         <div class="form-group">
                             <label>Skills (comma-separated)</label>
-                            <input type="text" id="cvSkills" placeholder="Python, JavaScript, Project Management, Leadership">
+                            <input type="text" id="cvSkills" placeholder="Python, JavaScript, Project Management">
                         </div>
                         <div class="form-group">
                             <label>Template Style</label>
@@ -147,7 +562,6 @@
                                 <option value="modern">Modern Professional</option>
                                 <option value="classic">Classic Executive</option>
                                 <option value="creative">Creative Designer</option>
-                                <option value="tech">Tech Industry</option>
                             </select>
                         </div>
                         <button type="submit" class="btn-generate">✨ Generate CV ✨</button>
@@ -174,7 +588,7 @@
                         </div>
                         <div class="form-group">
                             <label>Key Skills</label>
-                            <input type="text" id="coverSkills" placeholder="e.g., Project Management, Data Analysis, Communication">
+                            <input type="text" id="coverSkills" placeholder="e.g., Project Management, Data Analysis">
                         </div>
                         <button type="submit" class="btn-generate">✨ Generate Cover Letter ✨</button>
                     </form>
@@ -192,6 +606,28 @@
         </section>
     </main>
 
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h4>ABSON CV Genius</h4>
+                <p>Create professional CVs and cover letters with AI</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+            </div>
+            <div class="footer-section">
+                <h4>Payment Methods</h4>
+                <p>💳 Cards | 🏦 Bank Transfer | 📱 USSD | 💰 Mobile Money</p>
+                <p>Powered by Paystack - Secure African Payments</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 ABSON CV Generator. All rights reserved.</p>
+        </div>
+    </footer>
+
     <div id="loginModal" class="modal" style="display: none;">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -205,29 +641,236 @@
         </div>
     </div>
 
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h4>ABSON CV Genius</h4>
-                <p>Create professional CVs and cover letters with AI</p>
-            </div>
-            <div class="footer-section">
-                <h4>Quick Links</h4>
-                <a href="#features">Features</a>
-                <a href="#pricing">Pricing</a>
-                <a href="#" id="contactLink">Contact</a>
-            </div>
-            <div class="footer-section">
-                <h4>Payment Methods</h4>
-                <p>💳 Cards | 🏦 Bank Transfer | 📱 USSD | 💰 Mobile Money</p>
-                <p>Powered by Paystack - Secure African Payments</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 ABSON CV Generator. All rights reserved.</p>
-        </div>
-    </footer>
+    <script>
+        let apiKey = localStorage.getItem('apiKey');
+        let currentDocId = null;
 
-    <script src="script.js"></script>
+        // DOM Elements
+        const loginModal = document.getElementById('loginModal');
+        const loginBtn = document.getElementById('loginBtn');
+        const getStartedBtn = document.getElementById('getStartedBtn');
+        const loginForm = document.getElementById('loginForm');
+        const generatorSection = document.getElementById('generator');
+        const cvForm = document.getElementById('cvForm');
+        const coverForm = document.getElementById('coverForm');
+        const resultDiv = document.getElementById('result');
+        const resultContent = document.getElementById('resultContent');
+
+        function showLoginModal() {
+            loginModal.style.display = 'flex';
+        }
+
+        document.querySelector('.close').onclick = () => {
+            loginModal.style.display = 'none';
+        };
+
+        loginBtn.onclick = showLoginModal;
+        getStartedBtn.onclick = showLoginModal;
+
+        loginForm.onsubmit = async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('loginEmail').value;
+            
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                
+                const data = await response.json();
+                apiKey = data.api_key;
+                localStorage.setItem('apiKey', apiKey);
+                
+                loginModal.style.display = 'none';
+                generatorSection.style.display = 'block';
+                generatorSection.scrollIntoView({ behavior: 'smooth' });
+                
+                alert('Successfully registered! You have 3 free documents.');
+                checkUserStatus();
+            } catch (error) {
+                alert('Registration failed: ' + error.message);
+            }
+        };
+
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const tab = btn.dataset.tab;
+                document.getElementById('cv-tab').style.display = tab === 'cv' ? 'block' : 'none';
+                document.getElementById('cover-tab').style.display = tab === 'cover' ? 'block' : 'none';
+            };
+        });
+
+        cvForm.onsubmit = async (e) => {
+            e.preventDefault();
+            if (!apiKey) { showLoginModal(); return; }
+            
+            const data = {
+                name: document.getElementById('cvName').value,
+                email: document.getElementById('cvEmail').value,
+                phone: document.getElementById('cvPhone').value,
+                experience: document.getElementById('cvExperience').value,
+                education: document.getElementById('cvEducation').value,
+                skills: document.getElementById('cvSkills').value,
+                template: document.getElementById('cvTemplate').value
+            };
+            
+            await generateDocument('/api/generate-cv', data);
+        };
+
+        coverForm.onsubmit = async (e) => {
+            e.preventDefault();
+            if (!apiKey) { showLoginModal(); return; }
+            
+            const data = {
+                name: document.getElementById('coverName').value,
+                position: document.getElementById('coverPosition').value,
+                company: document.getElementById('coverCompany').value,
+                experience: document.getElementById('coverExperience').value,
+                skills: document.getElementById('coverSkills').value
+            };
+            
+            await generateDocument('/api/generate-cover', data);
+        };
+
+        async function generateDocument(endpoint, data) {
+            const btn = document.querySelector('.btn-generate');
+            const originalText = btn.textContent;
+            btn.textContent = 'Generating...';
+            btn.disabled = true;
+            
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-API-Key': apiKey },
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (response.status === 402 || result.need_upgrade) {
+                    alert(result.error || 'Please upgrade to continue.');
+                    return;
+                }
+                
+                if (result.error) {
+                    alert('Error: ' + result.error);
+                    return;
+                }
+                
+                currentDocId = result.cv_id || result.cover_id;
+                resultContent.innerHTML = result.content.replace(/\n/g, '<br>');
+                resultDiv.style.display = 'block';
+                resultDiv.dataset.hasWatermark = result.has_watermark;
+                
+                if (result.free_remaining !== undefined) {
+                    alert(`Document generated! ${result.free_remaining} free documents remaining.`);
+                }
+                
+                checkUserStatus();
+            } catch (error) {
+                alert('Generation failed: ' + error.message);
+            } finally {
+                btn.textContent = originalText;
+                btn.disabled = false;
+            }
+        }
+
+        async function checkUserStatus() {
+            if (!apiKey) return;
+            
+            try {
+                const response = await fetch('/api/user-status', {
+                    headers: { 'X-API-Key': apiKey }
+                });
+                
+                const status = await response.json();
+                
+                const statusBar = document.createElement('div');
+                statusBar.className = 'status-bar';
+                
+                if (status.plan === 'free') {
+                    statusBar.innerHTML = `
+                        <span>⚠️ Free trial: ${status.free_remaining} documents remaining (watermarked)</span>
+                        <button onclick="upgradePrompt()" class="status-upgrade">Upgrade to Remove Watermark →</button>
+                    `;
+                } else if (status.plan === 'pay_as_you_go') {
+                    statusBar.innerHTML = `
+                        <span>💰 Credits: $${status.credits.toFixed(2)} (${status.files_from_credits} documents left)</span>
+                        <button onclick="buyMoreCredits()" class="status-upgrade">Buy More Credits →</button>
+                    `;
+                } else if (status.plan === 'subscription') {
+                    statusBar.innerHTML = `<span>✨ Premium Active - No Watermarks! Unlimited Documents</span>`;
+                }
+                
+                const existingBar = document.querySelector('.status-bar');
+                if (existingBar) existingBar.remove();
+                
+                const container = document.querySelector('.container');
+                if (container) container.insertBefore(statusBar, container.firstChild);
+            } catch (error) {
+                console.error('Status check failed:', error);
+            }
+        }
+
+        window.upgradePrompt = function() {
+            alert('Upgrade options:\n\n$1/month - Unlimited documents, no watermarks\n$0.10/file - Pay as you go, no watermarks\n\nContact support to upgrade.');
+        };
+
+        window.buyMoreCredits = function() {
+            alert('Pay-as-you-go: $0.10 per document, minimum $10 purchase.\n\nContact support to add credits.');
+        };
+
+        document.getElementById('exportPDF').onclick = async () => {
+            if (!currentDocId) return;
+            
+            try {
+                const response = await fetch(`/api/export-pdf/${currentDocId}`, {
+                    headers: { 'X-API-Key': apiKey }
+                });
+                
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `document_${currentDocId}.pdf`;
+                a.click();
+            } catch (error) {
+                alert('Export failed: ' + error.message);
+            }
+        };
+
+        document.getElementById('copyText').onclick = () => {
+            const text = resultContent.innerText;
+            navigator.clipboard.writeText(text);
+            alert('Copied to clipboard!');
+        };
+
+        document.getElementById('newDocument').onclick = () => {
+            resultDiv.style.display = 'none';
+            currentDocId = null;
+            cvForm.reset();
+            coverForm.reset();
+        };
+
+        document.querySelectorAll('.btn-plan').forEach(btn => {
+            btn.onclick = () => {
+                const plan = btn.dataset.plan;
+                if (plan === 'free') {
+                    alert('Free plan activated! You have 3 free documents to try.');
+                } else {
+                    alert('Premium features coming soon! Contact us to upgrade.');
+                }
+            };
+        });
+
+        if (apiKey) {
+            generatorSection.style.display = 'block';
+            checkUserStatus();
+        }
+    </script>
 </body>
 </html>
