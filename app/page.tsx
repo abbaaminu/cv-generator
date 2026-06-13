@@ -14,52 +14,26 @@ const TEMPLATE_LABELS: Record<Template, string> = {
 };
 
 export default function HomePage() {
-  const [form, setForm] = useState<CVGenerationInput>({
+  const [form, setForm] = useState({
     // Personal Information
-<label>Full Name *</label>
-<input name="fullName" placeholder="John Doe" />
-
-<label>Age</label>
-<input name="age" type="number" placeholder="25" />
-
-<label>Address</label>
-<input name="address" placeholder="123 Main St, City" />
-
-<label>Email *</label>
-<input name="email" type="email" placeholder="john@example.com" />
-
-<label>Phone *</label>
-<input name="phone" placeholder="+1 234 567 8900" />
-
-<label>Avatar</label>
-<input name="avatar" type="file" accept="image/*" />
-
-// Career Objective / Professional Summary
-<label>Career Objective *</label>
-<textarea name="objective" placeholder="I am seeking a position where I can..." />
-
-// Education
-<label>Education *</label>
-<textarea name="education" placeholder="B.Sc. Computer Science, University of XYZ, 2020" />
-
-// Work Experience
-<label>Work Experience *</label>
-<textarea name="experience" placeholder="Software Engineer at ABC Corp (2021–Present)..." />
-
-// Hobbies
-<label>Hobbies</label>
-<input name="hobbies" placeholder="Reading, coding, hiking" />
-
-// Other Information
-<label>Other Information</label>
-<textarea name="otherInfo" placeholder="Certifications, languages, etc." />
-
-// Template Selection
-<label>Choose CV Template</label>
-<select name="template">
-  <option value="template1">Template 1</option>
-  <option value="template2">Template 2</option>
-</select>
+    fullName: '',
+    age: '',
+    address: '',
+    email: '',
+    phone: '',
+    avatar: '', // We'll handle avatar separately
+    // Professional Summary
+    objective: '',
+    // Education
+    education: '',
+    // Work Experience
+    experience: '',
+    // Hobbies
+    hobbies: '',
+    // Other Information
+    otherInfo: '',
+    // Template
+    template: 'modern' as Template,
   });
 
   const [cvContent, setCvContent] = useState('');
@@ -75,14 +49,26 @@ export default function HomePage() {
   }
 
   async function handleGenerate() {
-    if (!form.fullName || !form.jobTitle || !form.experience) {
-      setGenError('Please fill in at least your name, job title, and experience.');
+    if (!form.fullName || !form.objective || !form.experience) {
+      setGenError('Please fill in at least your name, career objective, and work experience.');
       return;
     }
     setGenError('');
     setGenerating(true);
     try {
-      const result = await generateFullCV(form);
+      // Convert form to the shape expected by generateFullCV (if needed)
+      const cvInput: CVGenerationInput = {
+        fullName: form.fullName,
+        email: form.email,
+        phone: form.phone,
+        location: form.address,
+        jobTitle: form.objective, // using objective as job title for prompt
+        experience: form.experience,
+        education: form.education,
+        skills: form.hobbies + ' ' + form.otherInfo, // combine hobbies and other info as skills
+        template: form.template,
+      };
+      const result = await generateFullCV(cvInput);
       setCvContent(result);
     } catch (e) {
       console.error(e);
@@ -120,13 +106,13 @@ export default function HomePage() {
       </header>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* ─── Form Panel ─── */}
+        {/* Form Panel */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 space-y-5">
           <h2 className="text-lg font-bold text-gray-800">Your Details</h2>
 
-          {/* Template */}
+          {/* Template Selection */}
           <div>
-            <label className={labelClass}>Template</label>
+            <label className={labelClass}>Choose CV Template</label>
             <div className="flex gap-2 flex-wrap">
               {(Object.keys(TEMPLATE_LABELS) as Template[]).map((t) => (
                 <button
@@ -144,59 +130,90 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Name + Email */}
+          {/* Personal Information */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className={labelClass}>Full Name *</label>
               <input name="fullName" value={form.fullName} onChange={handleChange} placeholder="John Doe" className={inputClass} />
             </div>
             <div>
+              <label className={labelClass}>Age</label>
+              <input name="age" type="number" value={form.age} onChange={handleChange} placeholder="25" className={inputClass} />
+            </div>
+            <div>
+              <label className={labelClass}>Address</label>
+              <input name="address" value={form.address} onChange={handleChange} placeholder="123 Main St, City" className={inputClass} />
+            </div>
+            <div>
               <label className={labelClass}>Email *</label>
-              <input name="email" type="email" value={form.email} onChange={handleChange} placeholder="john@email.com" className={inputClass} />
-            </div>
-          </div>
-
-          {/* Phone + Location */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className={labelClass}>Phone</label>
-              <input name="phone" value={form.phone} onChange={handleChange} placeholder="+234 800 000 0000" className={inputClass} />
+              <input name="email" type="email" value={form.email} onChange={handleChange} placeholder="john@example.com" className={inputClass} />
             </div>
             <div>
-              <label className={labelClass}>Location</label>
-              <input name="location" value={form.location} onChange={handleChange} placeholder="Lagos, Nigeria" className={inputClass} />
+              <label className={labelClass}>Phone *</label>
+              <input name="phone" value={form.phone} onChange={handleChange} placeholder="+1 234 567 8900" className={inputClass} />
+            </div>
+            <div>
+              <label className={labelClass}>Avatar (URL)</label>
+              <input name="avatar" value={form.avatar} onChange={handleChange} placeholder="https://example.com/avatar.jpg" className={inputClass} />
             </div>
           </div>
 
-          {/* Job Title */}
+          {/* Career Objective */}
           <div>
-            <label className={labelClass}>Job Title / Role *</label>
-            <input name="jobTitle" value={form.jobTitle} onChange={handleChange} placeholder="Senior Software Engineer" className={inputClass} />
-          </div>
-
-          {/* Experience */}
-          <div>
-            <label className={labelClass}>Work Experience *</label>
+            <label className={labelClass}>Career Objective / Professional Summary *</label>
             <textarea
-              name="experience"
-              value={form.experience}
+              name="objective"
+              value={form.objective}
               onChange={handleChange}
-              rows={4}
-              placeholder="Company: Acme Corp (2020–Present)&#10;Role: Backend Developer&#10;• Built REST APIs serving 100k users&#10;• Led a team of 5 engineers"
+              rows={3}
+              placeholder="I am seeking a position where I can..."
               className={textareaClass}
             />
           </div>
 
           {/* Education */}
           <div>
-            <label className={labelClass}>Education</label>
-            <textarea name="education" value={form.education} onChange={handleChange} rows={2} placeholder="BSc Computer Science, ABU Zaria, 2019" className={textareaClass} />
+            <label className={labelClass}>Education *</label>
+            <textarea
+              name="education"
+              value={form.education}
+              onChange={handleChange}
+              rows={3}
+              placeholder="B.Sc. Computer Science, University of XYZ, 2020"
+              className={textareaClass}
+            />
           </div>
 
-          {/* Skills */}
+          {/* Work Experience */}
           <div>
-            <label className={labelClass}>Skills</label>
-            <input name="skills" value={form.skills} onChange={handleChange} placeholder="React, Node.js, Python, PostgreSQL, AWS" className={inputClass} />
+            <label className={labelClass}>Work Experience *</label>
+            <textarea
+              name="experience"
+              value={form.experience}
+              onChange={handleChange}
+              rows={5}
+              placeholder="Software Engineer at ABC Corp (2021–Present)&#10;• Developed features serving 1M users&#10;• Led team of 3 developers"
+              className={textareaClass}
+            />
+          </div>
+
+          {/* Hobbies */}
+          <div>
+            <label className={labelClass}>Hobbies</label>
+            <input name="hobbies" value={form.hobbies} onChange={handleChange} placeholder="Reading, coding, hiking" className={inputClass} />
+          </div>
+
+          {/* Other Information */}
+          <div>
+            <label className={labelClass}>Other Information</label>
+            <textarea
+              name="otherInfo"
+              value={form.otherInfo}
+              onChange={handleChange}
+              rows={2}
+              placeholder="Certifications, languages, awards, etc."
+              className={textareaClass}
+            />
           </div>
 
           {genError && <p className="text-red-600 text-sm">{genError}</p>}
@@ -220,7 +237,7 @@ export default function HomePage() {
           </button>
         </section>
 
-        {/* ─── Preview Panel ─── */}
+        {/* Preview Panel */}
         <section className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 flex flex-col gap-5">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-bold text-gray-800">CV Preview</h2>
@@ -240,7 +257,7 @@ export default function HomePage() {
                 {cvContent}
               </div>
 
-              {/* Download */}
+              {/* Download Section */}
               <div>
                 {isPaid ? (
                   <>
@@ -288,9 +305,6 @@ export default function HomePage() {
         userEmail={form.email}
         amount={500000}
       />
-
-      {/* Unused ref to suppress TS warning */}
-      <span style={{ display: 'none' }} onClick={handleDownloadAttempt} />
     </div>
   );
 }
