@@ -72,31 +72,6 @@ export async function downloadWord(cvText: string, filename = 'CV.docx'): Promis
   triggerDownload(blob, filename, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
 }
 
-/* ─── Excel (.xlsx) ─────────────────────────────────────── */
-
-export function downloadExcel(
-  rows: Record<string, string | number>[],
-  filename = 'CV.xlsx'
-): void {
-  const XLSX = require('xlsx');
-
-  const worksheet = XLSX.utils.json_to_sheet(rows);
-  const workbook = XLSX.utils.book_new();
-
-  // Auto column widths
-  const maxWidth = 60;
-  const cols = Object.keys(rows[0] ?? {}).map((key) => ({
-    wch: Math.min(
-      maxWidth,
-      Math.max(key.length, ...rows.map((r) => String(r[key] ?? '').length)) + 2
-    ),
-  }));
-  worksheet['!cols'] = cols;
-
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'CV');
-  XLSX.writeFile(workbook, filename);
-}
-
 /* ─── Helper ────────────────────────────────────────────── */
 
 function triggerDownload(blob: Blob, filename: string, mimeType: string): void {
