@@ -15,15 +15,51 @@ const TEMPLATE_LABELS: Record<Template, string> = {
 
 export default function HomePage() {
   const [form, setForm] = useState<CVGenerationInput>({
-    fullName: '',
-    email: '',
-    phone: '',
-    location: '',
-    jobTitle: '',
-    experience: '',
-    education: '',
-    skills: '',
-    template: 'modern',
+    // Personal Information
+<label>Full Name *</label>
+<input name="fullName" placeholder="John Doe" />
+
+<label>Age</label>
+<input name="age" type="number" placeholder="25" />
+
+<label>Address</label>
+<input name="address" placeholder="123 Main St, City" />
+
+<label>Email *</label>
+<input name="email" type="email" placeholder="john@example.com" />
+
+<label>Phone *</label>
+<input name="phone" placeholder="+1 234 567 8900" />
+
+<label>Avatar</label>
+<input name="avatar" type="file" accept="image/*" />
+
+// Career Objective / Professional Summary
+<label>Career Objective *</label>
+<textarea name="objective" placeholder="I am seeking a position where I can..." />
+
+// Education
+<label>Education *</label>
+<textarea name="education" placeholder="B.Sc. Computer Science, University of XYZ, 2020" />
+
+// Work Experience
+<label>Work Experience *</label>
+<textarea name="experience" placeholder="Software Engineer at ABC Corp (2021–Present)..." />
+
+// Hobbies
+<label>Hobbies</label>
+<input name="hobbies" placeholder="Reading, coding, hiking" />
+
+// Other Information
+<label>Other Information</label>
+<textarea name="otherInfo" placeholder="Certifications, languages, etc." />
+
+// Template Selection
+<label>Choose CV Template</label>
+<select name="template">
+  <option value="template1">Template 1</option>
+  <option value="template2">Template 2</option>
+</select>
   });
 
   const [cvContent, setCvContent] = useState('');
