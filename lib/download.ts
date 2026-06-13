@@ -71,6 +71,23 @@ export async function downloadWord(cvText: string, filename = 'CV.docx'): Promis
   const blob = await Packer.toBlob(doc);
   triggerDownload(blob, filename, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
 }
+export function downloadExcel(
+  rows: Record<string, string | number>[],
+  filename = 'CV.xlsx'
+): void {
+  // Dynamic import to prevent issues on the server
+  const XLSX = require('xlsx');
+  
+  // Create a worksheet from the data
+  const worksheet = XLSX.utils.json_to_sheet(rows);
+  
+  // Create a new workbook and append the worksheet
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'CV');
+  
+  // Write the file and trigger download
+  XLSX.writeFile(workbook, filename);
+}
 
 /* ─── Helper ────────────────────────────────────────────── */
 
